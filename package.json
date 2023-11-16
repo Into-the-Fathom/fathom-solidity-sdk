@@ -1,0 +1,26 @@
+{
+  "name": "sdkmock",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prettier": "prettier --write 'contracts/**/*.sol'",
+    "pre-release": "npm run prettier"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.4",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts-upgradeable": "^4.7.3",
+    "@openzeppelin/hardhat-upgrades": "^2.4.1",
+    "dotenv": "^16.0.1",
+    "ethers": "^6.8.1",
+    "hardhat": "^2.19.0",
+    "hardhat-deploy": "^0.11.43",
+    "prettier": "^2.4.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.18"
+  }
+}

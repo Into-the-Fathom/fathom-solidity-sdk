@@ -31,14 +31,14 @@ OpenPosition, ClosePosition, WithdrawStablecoin, WithdrawXDC, Received: Events f
 FXD balance must be provided to the FathomProxyWalletOwnerUpgradeable before calling any position closure functions.
 **buildProxyWallet()**: Builds a new proxy wallet which is the entry point to Fathom protocol.<br>
 **openPosition(uint256 _stablecoinAmount)**: Opens a new position by locking XDC and drawing FXD.<br>
-**closePositionPartial(uint256 _positionId, uint256 _collateralAmount, uint256 _stablecoinAmount)**: Partially closes a position to partially close. athomProxyWalletOwnerUpgradeable must have enough FXD to close the position partially.<br>
-**closePositionFull(uint256 _positionId)**: Fully closes a position. FathomProxyWalletOwnerUpgradeable must have enough FXD to close the whole position.<br>
+**closePositionPartial(uint256 _positionId, uint256 _collateralAmount, uint256 _stablecoinAmount)**: Partially closes a position to partially close. athomProxyWalletOwnerUpgradeable must have enough FXD balance to close the position partially.<br>
+**closePositionFull(uint256 _positionId)**: Fully closes a position. FathomProxyWalletOwnerUpgradeable must have enough FXD balance to close the whole position.<br>
 #### Withdrawal Functions:
-**withdrawStablecoin()**: Withdraws FXD stablecoins to the contract owner.
+**withdrawStablecoin()**: Withdraws FXD stablecoins to the contract owner.<br>
 **withdrawXDC()**: Withdraws XDC to the contract owner.
 #### Internal Utility Functions:
-**_validateAddress(address _address)**: Validates that an address is not the zero address.
-**_validateUint(uint256 _uintValue)**: Validates that a uint256 is not zero.
+**_validateAddress(address _address)**: Validates that an address is not the zero address.<br>
+**_validateUint(uint256 _uintValue)**: Validates that a uint256 is not zero.<br>
 **_successfullXDCTransfer(bool _sent)**: Ensures successful transfer of XDC.
 #### Fallback Function:
 **receive()**: Allows the contract to receive XDC and emits the Received event.

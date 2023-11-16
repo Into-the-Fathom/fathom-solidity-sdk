@@ -1,6 +1,9 @@
 
 # **Technical Documentation for FathomProxyWalletOwnerUpgradeable Smart Contract**
 As of Nov 16th 2023
+
+![Alt text](FXD_programmable_money.webp)
+
 ## Overview
 The FathomProxyWalletOwnerUpgradeable contract is designed for interaction with the Fathom stablecoin protocol on the XDC blockchain. It facilitates the management of collateralized debt positions using FXD, the protocol's native stablecoin. The contract includes functionalities for opening and closing positions, managing FXD stablecoins, and handling collateral in XDC.
 ## Contract Details

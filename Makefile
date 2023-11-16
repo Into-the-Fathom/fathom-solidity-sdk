@@ -1,4 +1,4 @@
-deploy:
+notUpgradeable:
 	npx hardhat run --network localhost scripts/deploy.js
 upgradeable:
 	npx hardhat run --network localhost scripts/deploy_upgradeable.js

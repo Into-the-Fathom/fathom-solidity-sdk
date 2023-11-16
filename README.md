@@ -2,14 +2,14 @@
 # **Technical Documentation for FathomProxyWalletOwnerUpgradeable Smart Contract**
 As of Nov 16th 2023
 
-![Alt text](FXD_programmable_money.webp)
+![FXD_programmable_money](FXD_programmable_money.webp)
 
 ## Overview
 The FathomProxyWalletOwnerUpgradeable contract is designed for interaction with the Fathom stablecoin protocol on the XDC blockchain. It facilitates the management of collateralized debt positions using FXD, the protocol's native stablecoin. The contract includes functionalities for opening and closing positions, managing FXD stablecoins, and handling collateral in XDC.
 ## Contract Details
-Pragma Solidity: 0.8.17 (Same as FXD contracts)
-License: MIT
-Inheritance: Inherits from OwnableUpgradeable from OpenZeppelin's contracts-upgradeable library. "^4.7.3"
+Pragma Solidity: 0.8.17 (Same as FXD contracts)<br>
+License: MIT<br>
+Inheritance: Inherits from OwnableUpgradeable from OpenZeppelin's contracts-upgradeable library. "^4.7.3"<br>
 
 ## Key Components
 ### State Variables:
@@ -21,18 +21,18 @@ OpenPosition, ClosePosition, WithdrawStablecoin, WithdrawXDC, Received: Events f
 ### Functions
 **initialize()**: Initializes the contract with necessary parameters and addresses. This is the contract's constructor equivalent in an upgradeable contract pattern.
 #### Position Management Functions:
-**ownerFirstPositionId()**, **ownerLastPositionId()**, **ownerPositionCount()**: Functions to query position IDs and count associated with the owner's proxy wallet.
-**getActualFXDToRepay(uint256 _positionId)**: Calculates the actual FXD amount to repay for a given position. It calculates debtValue which is the product of debtAccumulateRate of a certain collateral type and debtShare of a certain position.
-**getDebtAccumulatedRate()**: Retrieves the current debt accumulated rate for the collateral pool.
-**getPositionAddress(uint256 _positionId)**: Gets the address associated with a specific position. 
-**positions(uint256 _positionId)**: Returns position data for a given position ID. It returns lockedCollateral amount and debtShare.
-**list(uint256 _positionId)**: Lists the details of a position. by showing previous and the next position that the proxyWalletOwner contract owns. It is a linked list. For example, if 3 positions are created; 181, 183, 199. Calling list() fn with arg of 181 will return 0, 183. Meaning there was no position made prior to 181, and also the next position made for was positionId 183. list(183) will return 181, 199. And list(199) will return 183,0 since it is the last position.
+**ownerFirstPositionId()**, **ownerLastPositionId()**, **ownerPositionCount()**: Functions to query position IDs and count associated with the owner's proxy wallet.<br>
+**getActualFXDToRepay(uint256 _positionId)**: Calculates the actual FXD amount to repay for a given position. It calculates debtValue which is the product of debtAccumulateRate of a certain collateral type and debtShare of a certain position.<br>
+**getDebtAccumulatedRate()**: Retrieves the current debt accumulated rate for the collateral pool.<br>
+**getPositionAddress(uint256 _positionId)**: Gets the address associated with a specific position. <br>
+**positions(uint256 _positionId)**: Returns position data for a given position ID. It returns lockedCollateral amount and debtShare.<br>
+**list(uint256 _positionId)**: Lists the details of a position. by showing previous and the next position that the proxyWalletOwner contract owns. It is a linked list. For example, if 3 positions are created; 181, 183, 199. Calling list() fn with arg of 181 will return 0, 183. Meaning there was no position made prior to 181, and also the next position made for was positionId 183. list(183) will return 181, 199. And list(199) will return 183,0 since it is the last position.<br>
 #### Proxy Wallet Functions:
 FXD balance must be provided to the FathomProxyWalletOwnerUpgradeable before calling any position closure functions.
-**buildProxyWallet()**: Builds a new proxy wallet which is the entry point to Fathom protocol.
-**openPosition(uint256 _stablecoinAmount)**: Opens a new position by locking XDC and drawing FXD.
-**closePositionPartial(uint256 _positionId, uint256 _collateralAmount, uint256 _stablecoinAmount)**: Partially closes a position to partially close. athomProxyWalletOwnerUpgradeable must have enough FXD to close the position partially.
-**closePositionFull(uint256 _positionId)**: Fully closes a position. FathomProxyWalletOwnerUpgradeable must have enough FXD to close the whole position.
+**buildProxyWallet()**: Builds a new proxy wallet which is the entry point to Fathom protocol.<br>
+**openPosition(uint256 _stablecoinAmount)**: Opens a new position by locking XDC and drawing FXD.<br>
+**closePositionPartial(uint256 _positionId, uint256 _collateralAmount, uint256 _stablecoinAmount)**: Partially closes a position to partially close. athomProxyWalletOwnerUpgradeable must have enough FXD to close the position partially.<br>
+**closePositionFull(uint256 _positionId)**: Fully closes a position. FathomProxyWalletOwnerUpgradeable must have enough FXD to close the whole position.<br>
 #### Withdrawal Functions:
 **withdrawStablecoin()**: Withdraws FXD stablecoins to the contract owner.
 **withdrawXDC()**: Withdraws XDC to the contract owner.

@@ -1,14 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-interface IPositionManager {
-    struct List {
-        uint256 prev;
-        uint256 next;
-    }
-
+interface IManager {
     // mapping(uint256 => List) public list;
-    function list(uint256 _positionId) external view returns (List memory list);
+    function list(
+        uint256 _positionId
+    ) external view returns (uint256 prev, uint256 next);
 
     // mapping(address => uint256) public ownerFirstPositionId;
     function ownerFirstPositionId(

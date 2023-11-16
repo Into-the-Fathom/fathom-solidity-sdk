@@ -2,7 +2,7 @@
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./interfaces/IPositionManager.sol";
+import "./interfaces/IManager.sol";
 import "./interfaces/IBookKeeper.sol";
 import "./interfaces/ICollateralPoolConfig.sol";
 import "./interfaces/IProxyWalletRegistry.sol";
@@ -73,15 +73,13 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
     function ownerFirstPositionId() external view returns (uint256 positionId) {
         _validateAddress(ProxyWallet);
         _validateAddress(PositionManager);
-        return
-            IPositionManager(PositionManager).ownerFirstPositionId(ProxyWallet);
+        return IManager(PositionManager).ownerFirstPositionId(ProxyWallet);
     }
 
     function ownerLastPositionId() external view returns (uint256 positionId) {
         _validateAddress(ProxyWallet);
         _validateAddress(PositionManager);
-        return
-            IPositionManager(PositionManager).ownerLastPositionId(ProxyWallet);
+        return IManager(PositionManager).ownerLastPositionId(ProxyWallet);
     }
 
     function ownerPositionCount()
@@ -91,17 +89,16 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
     {
         _validateAddress(ProxyWallet);
         _validateAddress(PositionManager);
-        return
-            IPositionManager(PositionManager).ownerPositionCount(ProxyWallet);
+        return IManager(PositionManager).ownerPositionCount(ProxyWallet);
     }
 
     function list(
         uint256 _positionId
-    ) external view returns (IPositionManager.List memory) {
+    ) external view returns (uint256 prev, uint256 next) {
         _validateUint(_positionId);
         _validateAddress(ProxyWallet);
         _validateAddress(PositionManager);
-        return IPositionManager(PositionManager).list(_positionId);
+        return IManager(PositionManager).list(_positionId);
     }
 
     function buildProxyWallet() external onlyOwner {
@@ -145,8 +142,8 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
         _validateUint(_collateralAmount);
         _validateUint(_stablecoinAmount);
         _validateAddress(ProxyWallet);
-        IBookKeeper.Position memory positionData = positions(_positionId);
-        _positionClosureCheck(positionData.lockedCollateral);
+        (uint256 lockedCollateral, ) = positions(_positionId);
+        _positionClosureCheck(lockedCollateral);
         IToken(StablecoinAddress).approve(
             ProxyWallet,
             IToken(StablecoinAddress).balanceOf(address(this))
@@ -178,8 +175,8 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
         _validateUint(_positionId);
         _validateAddress(ProxyWallet);
         _validateAddress(BookKeeper);
-        IBookKeeper.Position memory positionData = positions(_positionId);
-        _positionClosureCheck(positionData.lockedCollateral);
+        (uint256 lockedCollateral, ) = positions(_positionId);
+        _positionClosureCheck(lockedCollateral);
         uint256 balanceBefore = IToken(StablecoinAddress).balanceOf(
             address(this)
         );
@@ -190,7 +187,7 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
             CollateralTokenAdapter,
             StablecoinAdapter,
             _positionId,
-            positionData.lockedCollateral,
+            lockedCollateral,
             bytes(hex"00")
         );
         IProxyWallet(ProxyWallet).execute(closePositionFullEncoding);
@@ -204,7 +201,7 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
         _successfullXDCTransfer(sent);
         emit ClosePosition(
             _positionId,
-            positionData.lockedCollateral,
+            lockedCollateral,
             balanceBefore - balanceAfter,
             true
         );
@@ -230,8 +227,8 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
     function getActualFXDToRepay(
         uint256 _positionId
     ) public view returns (uint256) {
-        return
-            (positions(_positionId).debtShare * getDebtAccumulatedRate()) / RAY;
+        (, uint256 debtShare) = positions(_positionId);
+        return (debtShare * getDebtAccumulatedRate()) / RAY;
     }
 
     function getDebtAccumulatedRate() public view returns (uint256) {
@@ -248,12 +245,12 @@ contract FathomProxyWalletOwnerUpgradeable is OwnableUpgradeable {
     ) public view returns (address positionAddress) {
         _validateUint(_positionId);
         _validateAddress(PositionManager);
-        return IPositionManager(PositionManager).positions(_positionId);
+        return IManager(PositionManager).positions(_positionId);
     }
 
     function positions(
         uint256 _positionId
-    ) public view returns (IBookKeeper.Position memory) {
+    ) public view returns (uint256 lockedCollateral, uint256 debtShare) {
         _validateUint(_positionId);
         _validateAddress(BookKeeper);
         return

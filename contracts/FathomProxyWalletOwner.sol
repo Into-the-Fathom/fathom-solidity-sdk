@@ -11,6 +11,7 @@ import "./interfaces/IToken.sol";
 
 error InvalidAddress();
 error InvalidUint();
+error PositionAlreadyClosed();
 error EtherTransferFailed(address recipient);
 
 contract FathomProxyWalletOwner is Ownable {
@@ -144,10 +145,7 @@ contract FathomProxyWalletOwner is Ownable {
         _validateUint(_stablecoinAmount);
         _validateAddress(ProxyWallet);
         IBookKeeper.Position memory positionData = positions(_positionId);
-        require(
-            positionData.lockedCollateral != 0,
-            "closePositionPartial-already-closed"
-        );
+        _positionClosureCheck(positionData.lockedCollateral);
         IToken(StablecoinAddress).approve(
             ProxyWallet,
             IToken(StablecoinAddress).balanceOf(address(this))
@@ -180,10 +178,7 @@ contract FathomProxyWalletOwner is Ownable {
         _validateAddress(ProxyWallet);
         _validateAddress(BookKeeper);
         IBookKeeper.Position memory positionData = positions(_positionId);
-        require(
-            positionData.lockedCollateral != 0,
-            "closePositionFull-already-closed"
-        );
+        _positionClosureCheck(positionData.lockedCollateral);
         uint256 balanceBefore = IToken(StablecoinAddress).balanceOf(
             address(this)
         );
@@ -273,6 +268,10 @@ contract FathomProxyWalletOwner is Ownable {
 
     function _validateUint(uint256 _uintValue) internal pure {
         if (_uintValue == 0) revert InvalidUint();
+    }
+
+    function _positionClosureCheck(uint256 _lockedCollateral) internal pure {
+        if (_lockedCollateral == 0) revert PositionAlreadyClosed();
     }
 
     function _successfullXDCTransfer(bool _sent) internal view {

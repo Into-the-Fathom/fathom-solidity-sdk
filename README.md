@@ -11,6 +11,188 @@ Pragma Solidity: 0.8.17 (Same as FXD contracts)<br>
 License: MIT<br>
 Inheritance: Inherits from OwnableUpgradeable from OpenZeppelin's contracts-upgradeable library. "^4.7.3"<br>
 
+## How to use the contract
+
+Below interface include the setter/getter fns to communicate with ProxyWalletOwner contract. You can use below interface in remix to communicate with the deployed contract easily.
+
+```.sol
+// SPDX-License-Identifier: AGPL-3.0-or-later
+pragma solidity 0.8.17;
+
+interface IFathomProxyWalletOwner {
+
+    struct List {
+        uint256 prev;
+        uint256 next;
+    }
+    
+    struct Position {
+        uint256 lockedCollateral; // Locked collateral inside this position (used for minting)                  [wad]
+        uint256 debtShare; // The debt share of this position or the share amount of minted Fathom Stablecoin   [wad]
+    }
+    
+    function openPosition(uint256 _stablecoinAmount) external payable;
+    
+    function closePositionPartial(
+        uint256 _positionId,
+        uint256 _collateralAmount,
+        uint256 _stablecoinAmount
+    ) external;
+    
+    function closePositionFull(
+        uint256 _positionId
+    ) external;
+    
+    function withdrawStablecoin() external;
+    
+    function withdrawXDC() external;
+    
+    function ProxyWalletRegistry() external view returns(address);
+
+    function ProxyWallet() external view returns (address);
+
+    function buildProxyWallet() external returns (address payable);
+
+    // mapping(uint256 => List) public list;
+    function list(uint256 _positionId) external view returns (List memory list);
+
+    // mapping(address => uint256) public ownerFirstPositionId;
+    function ownerFirstPositionId() external view returns (uint256 positionId);
+
+    // mapping(address => uint256) public ownerLastPositionId;
+    function ownerLastPositionId() external view returns (uint256 positionId);
+
+    // mapping(address => uint256) public ownerPositionCount;
+
+    function ownerPositionCount() external view returns (uint256 positionCount);
+
+    function getActualFXDToRepay(
+        uint256 _positionId
+    ) external view returns (uint256);
+    
+    function getDebtAccumulatedRate() external view returns (uint256);
+    
+    function getPositionAddress(
+        uint256 _positionId
+    ) external view returns (address positionAddress);
+
+    function positions(
+        uint256 _positionId
+    ) external view returns (Position memory position);
+
+    function owner() external view returns (address);
+}
+
+```
+
+
+### 1. Create ProxyWallet
+
+ProxyWallet is an entry point to the fathom protocol. Any address, whether it is an EOA or a contract address, must create a helper contract called *ProxyWallet*, and then via the ProxyWallet, user can open to borrow FXD and close positions to get the collateral back.<br>
+
+
+to make a ProxyWallet, call
+```.sol
+    function buildProxyWallet() external returns (address payable);
+```
+
+then proxyWallet for the FathomProxyWalletOwner contract will be created. You can check the proxyWallet address with the getter function below.
+
+```.sol
+    function ProxyWallet() external view returns (address);
+```
+
+### 2. Open a position
+
+Once you have the proxyWallet created, you can open a position using the fn below. 
+
+```.sol
+    function openPosition(uint256 _stablecoinAmount) external payable;
+```
+
+You must call the fn above with some amount of msg.value. The amount of XDC you send when calling the function above will be collateralized. And _stablecoinAmount which is the amount of FXD to borrow needs to be in the wei unit(10^18). If you wish to collateralize 800 XDC and borrow 15 FXD, send 800 XDC while calling openPosition fn with arg of 15000000000000000000. <br>
+
+Once your tx successfully goes through, then the owner/deployer of the ProxyWalletOwner contract will receive FXD. Try to check the position information. 
+
+### 3. Check position info
+
+You can check the first positionId that the proxyWalletOwner contract created with ownerFirstPositionId. <br>
+
+```.sol
+    // mapping(address => uint256) public ownerFirstPositionId;
+    function ownerFirstPositionId() external view returns (uint256 positionId);
+```
+
+You can check the last positionId  that the proxyWalletOwner contract created with ownerLastPositionId. <br>
+
+```.sol
+    // mapping(address => uint256) public ownerLastPositionId;
+    function ownerLastPositionId() external view returns (uint256 positionId);
+```
+
+You can check the number of positions created from proxyWalletOwner contract by calling
+
+```.sol
+    // mapping(address => uint256) public ownerPositionCount;
+
+    function ownerPositionCount() external view returns (uint256 positionCount);
+```
+
+You can check how much collateral was locked and debt is to be repaid by calling
+
+```.sol
+    function positions(
+        uint256 _positionId
+    ) external view returns (Position memory position);
+```
+
+Please note that the debtShare that is returned from the above function does not represent how much FXD needs to be paid to fully close the position. To get more precise calculation on how much FXD needs to be paid back to fully close the position, please call below fn.
+
+```.sol
+    function getActualFXDToRepay(
+        uint256 _positionId
+    ) external view returns (uint256);
+```
+
+You can check the the previous and the next positions, given a positionId made by the proxyWalletOwner with the below function.
+```.sol
+    // mapping(uint256 => List) public list;
+    function list(uint256 _positionId) external view returns (List memory list);
+```
+For example, if 3 positions are created; 181, 183, 199. Calling list() fn with arg of 181 will return 0, 183. Meaning there was no position made prior to 181, and also the next position made for was positionId 183. list(183) will return 181, 199. And list(199) will return 183,0 since it is the last position.
+
+### 4. Closing positions
+
+There are two ways to close positions. Fully and partially. <br>
+
+#### Position full closure
+Fully closing a position means that you pay back all the debt borrowed from the position and get all the lockedCollateral back from the position.<br>
+Please transfer FXD to proxyWalletOwner, so that the FXD will be used to close a position.<br>
+Once it is certain that there is enough FXD to close a position, please call fn below.
+
+```.sol
+    function closePositionFull(
+        uint256 _positionId
+    ) external;
+```
+
+#### Position partial closure
+
+Partially closing a position means that you pay back part of the debt borrowed from the position and get part of the lockedCollateral back from the position.<br>
+Please transfer FXD to proxyWalletOwner, so that the FXD will be used to partially close a position.<br>
+Once it is certain that there is enough FXD to partially close a position, please call fn below.
+
+```.sol
+    function closePositionPartial(
+        uint256 _positionId,
+        uint256 _collateralAmount,
+        uint256 _stablecoinAmount
+    ) external;
+```
+
+
+_collateralAmount and _stablecoinAmount are in unit of Wei(10^18). When closing a position partially, the value of collateral and value of debt in a position should stay balanced so that the position is not under the water.
+
 ## Key Components
 ### State Variables:
 ProxyWalletRegistry, BookKeeper, CollateralPoolConfig, StablecoinAddress, PositionManager, StabilityFeeCollector, CollateralTokenAdapter, StablecoinAdapter, ProxyWallet: Addresses of various components of the Fathom protocol.

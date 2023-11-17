@@ -283,17 +283,25 @@ unfortunately, logging of the deployed contracts do not work well with XDCforked
 
 ### Deployment on apothem
 
-To deploy non-upgradeable version of the contract, please run 
+#### To deploy non-upgradeable version of the contract, please run 
 ```cli
 $ npx hardhat deploy --tags ApothemDeployment --network apothem --reset
 ```
 
-To deploy upgradeable version of the contract, please run 
+#### The address of the deployed contract will be logged in the console.
 ```cli
 $ npx hardhat deploy --tags UpgradeApothem --network apothem --reset
 ```
+The addresses of the implementation, proxyAdmin, proxy will be logged in the console. Communicate with the proxy to use the contract, not the implementation nor the proxyAdmin.
 
+
+## Possible use cases of the SDK contract
+
+0) Tokenized positions when inherited to ERC721. It would be possible to tokenize a multiple FXD positions if the SDK contract will be inherited to an ERC721. Then the owner of the ERC721 contract will be the owner of the positions created via FathomProxyWalletOwner(which is the NFT itself). If you transfer an NFT, you transfer the ownership of a basket of FXD positions.
+
+1) Onchain investment fund when inherited to ERC4626 and DAO contracts. It would be possible to distribute ownership of the tokenized FXD positions and also the profit generated from the borrowed FXD. Distribution of ownership with ERC4626 and community based investment decision making can be done by DAO contract.
 
 ## Conclusion
 This contract acts as a gateway for easy and efficient interaction with the Fathom stablecoin protocol, enabling users to manage collateralized debt positions with FXD stablecoins on the XDC chain.
+
 

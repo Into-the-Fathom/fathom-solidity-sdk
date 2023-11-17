@@ -47,9 +47,9 @@ interface IFathomProxyWalletOwner {
     
     function withdrawXDC() external;
     
-    function ProxyWalletRegistry() external view returns(address);
+    function proxyWalletRegistry() external view returns(address);
 
-    function ProxyWallet() external view returns (address);
+    function proxyWallet() external view returns (address);
 
     function buildProxyWallet() external returns (address payable);
 
@@ -99,7 +99,7 @@ to make a ProxyWallet, call
 then proxyWallet for the FathomProxyWalletOwner contract will be created. You can check the proxyWallet address with the getter function below.
 
 ```.sol
-    function ProxyWallet() external view returns (address);
+    function proxyWallet() external view returns (address);
 ```
 
 ### 2. Open a position
@@ -195,7 +195,7 @@ _collateralAmount and _stablecoinAmount are in unit of Wei(10^18). When closing 
 
 ## Key Components
 ### State Variables:
-ProxyWalletRegistry, BookKeeper, CollateralPoolConfig, StablecoinAddress, PositionManager, StabilityFeeCollector, CollateralTokenAdapter, StablecoinAdapter, ProxyWallet: Addresses of various components of the Fathom protocol.
+proxyWalletRegistry, bookKeeper, collateralPoolConfig, stablecoinAddress, positionManager, stabilityFeeCollector, collateralTokenAdapter, stablecoinAdapter, proxyWallet: Addresses of various components of the Fathom protocol.
 Collateral_pool_id: Identifier for the collateral pool. From the string of ‘XDC’, padded to fit bytes32.
 RAY: A constant used for precision in calculations, set to 10^27
 ### Events:

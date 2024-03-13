@@ -1,11 +1,11 @@
 
 # **Technical Documentation for FathomProxyWalletOwnerUpgradeable Smart Contract**
-As of Nov 16th 2023
+As of March 13 2024
 
 ![FXD_programmable_money](FXD_programmable_money.webp)
 
 ## Overview
-The FathomProxyWalletOwnerUpgradeable contract is designed for interaction with the Fathom stablecoin protocol on the XDC blockchain. It facilitates the management of collateralized debt positions using FXD, the protocol's native stablecoin. The contract includes functionalities for opening and closing positions, managing FXD stablecoins, and handling collateral in XDC.
+The FathomProxyWalletOwnerUpgradeable contract is designed for interaction with the Fathom stablecoin protocol on the XDC blockchain. It facilitates the management of collateralized debt positions using FXD, the protocol's native stablecoin. The contract includes functionalities for opening and closing positions, managing FXD stablecoins, and handling collateral in XDC. You are free to inherit the FathomProxyWalletOwnerUpgradeable contract to NFT, Multisig, DAO or investment strategy smart contract or deploy the FathomProxyWalletOwnerUpgradeable contract from Multisig, DAO or investment strategy.
 ## Contract Details
 Pragma Solidity: 0.8.17 (Same as FXD contracts)<br>
 License: MIT<br>
@@ -301,7 +301,44 @@ The addresses of the implementation, proxyAdmin, proxy will be logged in the con
 
 1) Onchain investment fund when inherited to ERC4626 and DAO contracts. It would be possible to distribute ownership of the tokenized FXD positions and also the profit generated from the borrowed FXD. Distribution of ownership with ERC4626 and community based investment decision making can be done by DAO contract.
 
+2) Inheritance to a Multisig wallet which inherits this contract. You can manage CDPs having Multisig wallet contract as the proxyWallet owner itself.
+
+3) Deploy FathomProxyWalletOwner contract using multisig and have the multisig wallet as the owner of FathomProxyWalletOwner contract to interact with the FXD protocol.
+
+## Contract Addresses for deployment of the FathomProxyWalletOwner/FathomProxyWalletOwnerUpgradeable
+
+### Xinfin mainnet
+
+"positionManager" : "0x2fE84707e907eaB4C4E6a91CCe458E648be390Ae"
+"stabilityFeeCollector" : "0x00f093e0E188dA1711a18fd5BF7468aea706888C"
+"collateralTokenAdapter" : "0x2fc7e65023aFF27FA61A573B5C8E3fDe3CE9ef79"
+"stablecoinAdapter" : "0xE3b248A97E9eb778c9B08f20a74c9165E22ef40E"
+"proxyWalletRegistry":"0x3b92595cbe2fC6063e696460990e69Ae4172c707"
+"bookKeeper" : "0x6FD3f049DF9e1886e1DFc1A034D379efaB0603CE"
+"stablecoinAddress" : "0x49d3f7543335cf38Fa10889CCFF10207e22110B5"
+"collateralPoolConfig" : "0x4F5Ea639600A01931B1370CDe99a7B1e7b6b8f6C"
+
+#### CollateralPoolId
+"collateral_pool_id" :  "0x5844430000000000000000000000000000000000000000000000000000000000"
+
+
+### Apothem test net
+
+"positionManager" : "0x9661dCD4043eDb266a43e4Bd65DCae87dE051FD6"
+"stabilityFeeCollector" : "0x2b7a0146E88fa7DC334d221561516f751ae3F8b9"
+"collateralTokenAdapter" : "0x7793129dDB6de37249eF98168D989e5E2fBee76E"
+"stablecoinAdapter" : "0x2A63856eba3F3A1B07B6Cf3296D5e6f601E26044"
+"proxyWalletRegistry":"0x97307cA8744d7ab35e75BdC54194fcC003F5222b"
+"bookKeeper" : "0xe9f8f2B94dFA17e02ce93B9607f9694923Bde153"
+"stablecoinAddress" : "0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96"
+"collateralPoolConfig" : "0xb8c792dfd859dC253F549A56602b625cc214A3Ef"
+
+#### CollateralPoolId
+"collateral_pool_id" :  "0x5844430000000000000000000000000000000000000000000000000000000000"
+
+
 ## Conclusion
 This contract acts as a gateway for easy and efficient interaction with the Fathom stablecoin protocol, enabling users to manage collateralized debt positions with FXD stablecoins on the XDC chain.
+
 
 
